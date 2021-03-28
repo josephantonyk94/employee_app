@@ -3,6 +3,7 @@ import 'package:sample_api_test/model/user.dart';
 
 class ApiClient{
   Dio dio =Dio();
+ // ignore: missing_return
  Future login(UserModel user){
     FormData formData=FormData.fromMap({
       "email": "eve.holt@reqres.in",
@@ -15,7 +16,7 @@ class ApiClient{
       print(e.message);
     }
   }
-  Future fetchEmployees(int page){
-   return dio.get('https://reqres.in/api/users',queryParameters: {"page":page.toString()});
+   fetchUser(int page) {
+   return dio.get("https://jsonplaceholder.typicode.com/users/$page/posts");
   }
 }

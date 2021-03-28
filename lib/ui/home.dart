@@ -4,54 +4,45 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sample_api_test/bloc/bloc.dart';
 import 'package:sample_api_test/bloc/event.dart';
 import 'package:sample_api_test/bloc/state.dart';
-import 'package:sample_api_test/model/employee.dart';
-import 'package:sample_api_test/ui/employee_card.dart';
+import 'package:sample_api_test/model/profile.dart';
+import 'package:sample_api_test/ui/bottom_loading_card.dart';
+import 'package:sample_api_test/ui/user_card.dart';
 
-class EmployeeHome extends StatefulWidget {
-  @override
-  _EmployeeHomeState createState() => _EmployeeHomeState();
-}
+class UserHome extends StatelessWidget {
+   List<Profile> userList=[];
 
-class _EmployeeHomeState extends State<EmployeeHome> {
-  List<Employee> employeeList=[];
-
-  ScrollController scrollController;
-  @override
-  void initState() {
-BlocProvider.of<SampleBloc>(context).add(FetchEmployee());
-scrollController=ScrollController();
-super.initState();
-  }
+  ScrollController scrollController=ScrollController();
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: SafeArea(child: BlocBuilder<SampleBloc,SampleState>(builder:(context,state){
-      if(state is EmployeeState) {
-        employeeList.addAll(state.employeeList);
+    BlocProvider.of<UserBloc>(context).add(FetchUsers());
+    return Scaffold(body: SafeArea(child: BlocBuilder<UserBloc,UserState>(builder:(context,state){
+      if(state is FetchedUserState) {
+        userList=state.userList;
+        print("in home ui ${userList.length}");
 
-        return Container(
-              child: ListView.builder(
-                  controller: scrollController
-                    ..addListener(() {
-                      if (scrollController.offset ==
-                              scrollController.position.maxScrollExtent &&
-                          !context.read<SampleBloc>().isFetching) {
-                        context.read<SampleBloc>()
-                          ..isFetching = true
-                          ..add(FetchEmployee());
-                      }
-                    }),
-                  itemCount: employeeList.length,
-                  itemBuilder: (context, index) {
-                    print(employeeList.length);
-                    return EmployeeCard(
-                        employeeList[index].firstName,
-                        employeeList[index].lastName,
-                        employeeList[index].email,
-                        employeeList[index].avatar);
-                  }),
-            );
-          } else return Center(child: CircularProgressIndicator());
-    },
+        return ListView.builder(
+            controller: scrollController
+              ..addListener(() {
+                if (scrollController.offset ==
+                        scrollController.position.maxScrollExtent &&
+                    !context.read<UserBloc>().isFetching&&context.read<UserBloc>().isReachedMax==false) {
+                  context.read<UserBloc>()
+                    ..isFetching = true
+                    ..add(FetchUsers());
+                }
+              }),
+            itemCount:state.isReachedMax?userList.length: userList.length+1,
+            itemBuilder: (context, index) {
+              print(index);
+              return index>=userList.length?BottomLoadingCard(): UserCard(
+                  userList[index].title,
+                  userList[index].body,
+                  userList[index].id.toString(),
+                  "https://cdn130.picsart.com/233347033055202.jpg");
+            });
+          }
+      else return  Center(child: CircularProgressIndicator());
+        },
     )),);
   }
 }

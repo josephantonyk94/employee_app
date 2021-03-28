@@ -35,28 +35,34 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-          child: BlocConsumer<SampleBloc, SampleState>(
+          child: BlocConsumer<UserBloc, UserState>(
         builder: (context, state) {
           return SingleChildScrollView(
-            child: Column(
-              children: [
-                TextField(
-                  decoration: InputDecoration(
-                    hintText: "Username",
+            child: Column(mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [SizedBox(height: 100,),
+                Container(
+                  child: Column(
+                    children: [
+                      TextField(
+                        decoration: InputDecoration(
+                          hintText: "Username",
+                        ),
+                        controller: usernameController,
+                      ),
+                      TextField(
+                        decoration: InputDecoration(hintText: "password"),
+                        controller: passwordController,
+                      ),
+                      ElevatedButton(
+                          onPressed: () {
+                            BlocProvider.of<UserBloc>(context).add(LoginEvent(
+                                UserModel(usernameController.text,
+                                    passwordController.text)));
+                          },
+                          child: Text("Login"))
+                    ],
                   ),
-                  controller: usernameController,
-                ),
-                TextField(
-                  decoration: InputDecoration(hintText: "password"),
-                  controller: passwordController,
-                ),
-                ElevatedButton(
-                    onPressed: () {
-                      BlocProvider.of<SampleBloc>(context).add(LoginEvent(
-                          UserModel(usernameController.text,
-                              passwordController.text)));
-                    },
-                    child: Text("Login"))
+                ),Container()
               ],
             ),
           );
@@ -64,9 +70,9 @@ class _LoginPageState extends State<LoginPage> {
         listener: (BuildContext context, state) {
           if (state is LoginSuccess) {
             Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => BlocProvider(create: (context)=>SampleBloc(InitialState()),
+                builder: (context) => BlocProvider(create: (context)=>UserBloc(InitialState()),
 
-                      child: EmployeeHome(),
+                      child: UserHome(),
                     )));
           }
         },

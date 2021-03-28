@@ -1,17 +1,23 @@
 import 'package:equatable/equatable.dart';
-import 'package:sample_api_test/model/employee.dart';
+import 'package:sample_api_test/model/profile.dart';
 
-abstract class SampleState extends Equatable{
+abstract class UserState extends Equatable{
   @override
   // TODO: implement props
   List<Object> get props => [];
 }
-class InitialState extends SampleState{}
-class LoginSuccess extends SampleState{}
-class LoginFail extends SampleState{}
+class InitialState extends UserState{}
+class LoginSuccess extends UserState{}
+class LoginFail extends UserState{}
 
-class EmployeeState extends SampleState{
-final List<Employee> employeeList;
+class FetchedUserState extends UserState{
+final List<Profile> userList;
+final bool isReachedMax;
 
-EmployeeState(this.employeeList);
+FetchedUserState(this.userList,this.isReachedMax);
+
+@override
+  List<Object> get props {
+return[userList,isReachedMax];
+  }
 }
